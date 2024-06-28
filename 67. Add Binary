@@ -1,0 +1,11 @@
+class Solution:
+    def addBinary(self, a: str, b: str) -> str:
+        def binToDec(b):
+            dec = 0
+            p = 0
+            
+            for i in range(len(b)-1, -1, -1):
+                dec += (2**p)*int(b[i])
+                p += 1
+            return dec
+        return bin(binToDec(a) + binToDec(b))[2:]
