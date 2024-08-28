@@ -1,34 +1,47 @@
 class Solution:
     def countSubIslands(self, grid1: List[List[int]], grid2: List[List[int]]) -> int:
-        def dfs(x: int, y: int, grid: List[List[int]], visited: List[List[bool]], island_cells: List[Tuple[int, int]]):
-            stack = [(x, y)]
-            cells = []
-            while stack:
-                cx, cy = stack.pop()
-                if 0 <= cx < len(grid) and 0 <= cy < len(grid[0]) and grid[cx][cy] == 1 and not visited[cx][cy]:
-                    visited[cx][cy] = True
-                    cells.append((cx, cy))
-                    stack.extend([(cx + dx, cy + dy) for dx, dy in [(0, 1), (1, 0), (0, -1), (-1, 0)]])
-            island_cells.append(cells)
+        r, c= len(grid1), len(grid1[0])
+        N=r*c
+        root=[i for i in range(N+1)]
+        Size=[1]*(N+1)
+        merge=0
+
+        def Find(x):
+            if x==root[x]: return x
+            root[x]=Find(root[x])
+            return root[x]
         
-        def is_sub_island(island_cells: List[Tuple[int, int]]) -> bool:
-            for x, y in island_cells:
-                if grid1[x][y] == 0:
-                    return False
+        def Union(x, y):
+            nonlocal merge
+            x, y=Find(x), Find(y)
+            if x==y: return False
+            if Size[x]>Size[y]:
+                Size[x]+=Size[y]
+                root[y]=x
+            else:
+                Size[y]+=Size[x]
+                root[x]=y
+            merge+=1
             return True
+        def idx(i, j): return i*c+j
 
-        m, n = len(grid2), len(grid2[0])
-        visited = [[False] * n for _ in range(m)]
-        sub_island_count = 0
+        cntLand=0
+        for i, row in enumerate(grid2):
+            for j, cell in enumerate(row):
+                curr, down, right= idx(i, j), idx(i+1,j), idx(i, j+1)
+                g2=cell==1
+                cntLand+=g2
+                if g2:
+                    if i+1<r and grid2[i+1][j]:
+                        Union(curr, down) 
 
-        for i in range(m):
-            for j in range(n):
-                if grid2[i][j] == 1 and not visited[i][j]:
-                    island_cells = []
-                    dfs(i, j, grid2, visited, island_cells)
-                    for cells in island_cells:
-                        if is_sub_island(cells):
-                            sub_island_count += 1
-                            break
+                    if j+1<c and grid2[i][j+1]:
+                        Union(curr, right)
+
+                    if grid1[i][j]==0:
+                        Union(curr, N) #connecting to water-cell N no sub-Island
+        return cntLand-merge
+                    
         
-        return sub_island_count
+            
+        
