@@ -1,0 +1,24 @@
+from collections import defaultdict
+from typing import List
+
+class Solution:
+    def uncommonFromSentences(self, s1: str, s2: str) -> List[str]:
+        word_count = defaultdict(int)
+        
+        for word in s1.split():
+            word_count[word] += 1
+        
+        for word in s2.split():
+            word_count[word] += 1
+        
+        uncommon_words = []
+        
+        for word in s1.split():
+            if word_count[word] == 1 and word not in s2.split():
+                uncommon_words.append(word)
+        
+        for word in s2.split():
+            if word_count[word] == 1 and word not in s1.split():
+                uncommon_words.append(word)
+        
+        return uncommon_words
