@@ -1,14 +1,14 @@
 class Solution(object):
     def twoSum(self, nums, target):
 
-        Done ={}
+        done ={}
 
         for i in range (len (nums)):
           sub = target - nums [i]
 
-          if sub in Done :
-             return [ Done [sub] , i ]
+          if sub in done :
+             return [ done [sub] , i ]
 
           else:
-               Done [nums [i]] = i
+               done [nums [i]] = i
 
